@@ -1,5 +1,6 @@
 public with sharing class AccountController {
-    public static List<Account> getAllActiveAccounts() {
+  
+    public List<Account> getAllActiveAccounts() {
 
       System.debug('test deploy');
       System.debug('test validation');
