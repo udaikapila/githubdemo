@@ -1,28 +1,24 @@
-name: Validate pull request
+name: Deploy project
 
 on:
-  pull_request:
-    branches:
-      - master
-    types: [opened, synchronize]
-    paths:
-      - 'force-app/**'
+  release:
+    types: [published]
 
 jobs:
-  validate-deployment:
+  deploy-release:
     runs-on: ubuntu-latest
     container:
       image: salesforce/cli:latest-slim
-    steps:      
+    steps:
       - name: 'Checkout source code'
-        uses: actions/checkout@v4
+        uses: actions/checkout@v3
         with:
           fetch-depth: 0
-      
+            
       - name: 'Authenticate using RESOURCEFULNARWHAL_SFDX_URL'
-        run: | 
-          echo ${{ secrets.RESOURCEFULNARWHAL_SFDX_URL }} | sf org login sfdx-url -s -u
-
-      - name: 'Validate'
         run: |
-          sf project deploy validate -d force-app/ -l RunLocalTests -w 30
+          echo ${{ secrets.RESOURCEFULNARWHAL_SFDX_URL }} | sf org login sfdx-url -s -u          
+
+      - name: 'Deploy'
+        run: |
+          sf project deploy start -d force-app/ -l RunLocalTests -w 30  
