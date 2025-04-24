@@ -1,24 +1,27 @@
 name: Deploy project to main
 
 on:
-  release:
-    types: [published]
+  pull_request:
+    types:
+      - closed
 
 jobs:
-  deploy-release:
-    runs-on: ubuntu-latest
-    container:
+  if_merged:
+    if: github.event.pull_request.merged == true
+      deploy-release:
+      runs-on: ubuntu-latest
+      container:
       image: salesforce/cli:latest-slim
-    steps:
-      - name: 'Checkout source code'
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
+        steps:
+        - name: 'Checkout source code'
+          uses: actions/checkout@v3
+          with:
+            fetch-depth: 0
             
-      - name: 'Authenticate using RESOURCEFULNARWHAL_SFDX_URL'
-        run: |
-          echo ${{ secrets.RESOURCEFULNARWHAL_SFDX_URL }} | sf org login sfdx-url -s -u          
+        - name: 'Authenticate using RESOURCEFULNARWHAL_SFDX_URL'
+          run: |
+            echo ${{ secrets.RESOURCEFULNARWHAL_SFDX_URL }} | sf org login sfdx-url -s -u          
 
-      - name: 'Deploy'
-        run: |
-          sf project deploy start -d force-app/ -l RunLocalTests -w 30 
+        - name: 'Deploy'
+          run: |
+            sf project deploy start -d force-app/ -l RunLocalTests -w 30 
